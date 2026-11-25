@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0e0c19">
+  <meta name="description" content="An offline 2D RPG about uniting the independent freestyle scene.">
+  <title>Freestylomon — The Independent Circuit</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body class="game-body" data-scene="field">
+  <main id="game" class="game" tabindex="-1">
+    <canvas id="stage" aria-label="Game world. Use the arrow keys or W A S D to move, Shift to run, Space to interact and M to open the menu."></canvas>
+
+    <div id="hud" class="hud">
+      <div id="location" class="hud-location">
+        <span class="hud-pin" data-icon="pin"></span>
+        <span class="hud-place"><small id="region">Dockside District</small><strong id="district">The Dockside</strong></span>
+      </div>
+      <div id="hud-quest" class="hud-quest"></div>
+    </div>
+
+    <div id="battle-overlay" class="battle-overlay" hidden></div>
+    <div id="dialog" class="dialog-layer" hidden></div>
+    <div id="battle-controls" class="battle-controls" hidden></div>
+    <div id="stage-message" class="stage-message" role="status" aria-live="polite"></div>
+
+    <div id="touch-controls" class="touch-pad">
+      <div id="dpad" class="dpad" role="group" aria-label="Movement pad"><span class="dpad-ring"></span><span id="dpad-knob" class="dpad-knob"></span></div>
+      <button id="interact" class="a-button" type="button" aria-label="Interact">A</button>
+    </div>
+    <div id="key-hints" class="key-hints" aria-hidden="true"><kbd>WASD</kbd> Move <kbd>Shift</kbd> Run <kbd>Space</kbd> Talk <kbd>M</kbd> Menu</div>
+
+    <div id="loading" class="loading" role="status"><span class="brand-mark" data-icon="wave"></span><strong>Loading the circuit…</strong><i></i></div>
+  </main>
+
+  <div id="menu" class="menu" inert>
+    <div class="menu-scrim" data-close-menu></div>
+    <section id="menu-page" class="menu-page" role="dialog" aria-modal="true" aria-labelledby="panel-title">
+      <header class="page-head">
+        <button id="page-back" class="icon-button" type="button" aria-label="Back to menu"><span data-icon="back"></span></button>
+        <div class="page-title"><div class="eyebrow" id="panel-eyebrow"></div><h2 id="panel-title"></h2></div>
+        <button id="close-panel" class="icon-button" type="button" aria-label="Close"><span data-icon="close"></span></button>
+      </header>
+      <div id="panel-message" class="panel-message" role="status" hidden></div>
+      <div id="panel-content" class="page-content"></div>
+    </section>
+    <aside id="menu-drawer" class="menu-drawer" role="dialog" aria-modal="true" aria-label="Game menu">
+      <header class="drawer-head">
+        <a href="/" class="brand" aria-label="Freestylomon"><span class="brand-mark" data-icon="wave"></span><span>FREESTYLO<span class="accent">MON</span><small>THE INDEPENDENT CIRCUIT</small></span></a>
+      </header>
+      <div id="menu-summary" class="menu-summary"></div>
+      <nav id="menu-list" class="menu-list" aria-label="Menu">
+        <button class="menu-item" type="button" data-page="crew" style="--i:0"><span class="menu-icon" data-icon="crew"></span><span class="menu-label">Crew<small id="menu-crew-sub"></small></span><span class="menu-arrow" data-icon="chevron"></span></button>
+        <button class="menu-item" type="button" data-page="bag" style="--i:1"><span class="menu-icon" data-icon="bag"></span><span class="menu-label">Bag<small id="menu-bag-sub"></small></span><span class="menu-arrow" data-icon="chevron"></span></button>
+        <button class="menu-item" type="button" data-page="journal" style="--i:2"><span class="menu-icon" data-icon="journal"></span><span class="menu-label">Journal<small>Objectives &amp; archive</small></span><span class="menu-arrow" data-icon="chevron"></span></button>
+        <button class="menu-item" type="button" data-page="save" style="--i:3"><span class="menu-icon" data-icon="disk"></span><span class="menu-label">Save<small>Export or start over</small></span><span class="menu-arrow" data-icon="chevron"></span></button>
+        <button class="menu-item" type="button" id="sound" role="switch" aria-checked="false" style="--i:4"><span class="menu-icon" data-icon="mute"></span><span class="menu-label">Sound<small>Music and effects</small></span><span class="switch" aria-hidden="true"></span></button>
+        <button class="menu-item" type="button" id="fullscreen" role="switch" aria-checked="false" style="--i:5"><span class="menu-icon" data-icon="expand"></span><span class="menu-label">Fullscreen<small>Hide the browser · F</small></span><span class="switch" aria-hidden="true"></span></button>
+        <a class="menu-item" href="/backstage/" target="freestylomon-backstage" style="--i:6"><span class="menu-icon" data-icon="sliders"></span><span class="menu-label">Backstage<small>Open the world editor</small></span><span class="menu-arrow" data-icon="external"></span></a>
+      </nav>
+      <footer class="drawer-foot"><span><kbd>Esc</kbd> Resume</span><span><kbd>↑</kbd><kbd>↓</kbd> Choose</span></footer>
+    </aside>
+  </div>
+
+  <button id="menu-button" class="menu-button" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="menu-drawer"><span class="menu-glyph" aria-hidden="true"><i></i><i></i><i></i></span><span class="menu-word" data-open="MENU" data-close="CLOSE"></span></button>
+
+  <script type="module" src="/app.js"></script>
+</body>
+</html>

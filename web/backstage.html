@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#141320">
+  <title>Backstage — Freestylomon</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body class="studio-body">
+  <header class="topbar">
+    <div class="shell topbar-inner studio-top">
+      <a href="/backstage/" class="brand"><span class="brand-mark" data-icon="wave"></span><span>FREESTYLO<span class="accent">MON</span><small>BACKSTAGE EDITOR</small></span></a>
+      <nav class="main-nav" aria-label="Editor views">
+        <button data-tab="map" class="active"><span data-icon="compass"></span>Map</button>
+        <button data-tab="catalog"><span data-icon="bag"></span>Catalogs</button>
+        <button data-tab="dialogue"><span data-icon="talk"></span>Dialogue</button>
+        <button data-tab="save"><span data-icon="flag"></span>Flags &amp; save</button>
+      </nav>
+      <div class="top-actions"><a class="admin-link" href="/" target="freestylomon-playtest" aria-label="Playtest game"><span data-icon="compass"></span><span>Playtest</span></a></div>
+    </div>
+  </header>
+  <main class="shell studio-shell">
+    <div class="studio-heading"><div><div class="eyebrow">WORLD EDITOR</div><h1>Backstage</h1></div><div id="studio-status" role="status" class="studio-status"><i></i><span>Loading game data…</span></div></div>
+    <section id="map-tab" class="studio-layout" hidden>
+      <aside class="studio-card studio-palette">
+        <header><h2>Palette</h2><select id="palette-group" aria-label="Palette category"><option value="tiles">Tiles</option><option value="entities">Entities</option><option value="items">Items</option><option value="species">Wild mobs</option><option value="decor">Decor &amp; lights</option></select></header>
+        <div id="palette"></div>
+        <p id="palette-hint" class="studio-hint">Paint with the brush or drag tiles onto the map.</p>
+      </aside>
+      <section class="studio-card studio-map">
+        <header class="map-toolbar"><div class="map-picker"><select id="map-picker" aria-label="Map"></select><button class="button" id="add-map">New map</button></div><div class="map-actions"><button id="undo" class="button" title="Undo (Ctrl+Z)">Undo</button><button id="redo" class="button" title="Redo (Ctrl+Shift+Z)">Redo</button><label class="toggle"><input type="checkbox" id="grid" checked> Grid</label></div></header>
+        <div class="tool-row" aria-label="Map tools">
+          <button class="button selected" data-tool="paint"><span data-icon="brush"></span> Brush</button>
+          <button class="button" data-tool="fill">Fill</button>
+          <button class="button" data-tool="select"><span data-icon="move"></span> Select / move</button>
+          <button class="button" data-tool="place"><span data-icon="pin"></span> Place</button>
+          <button class="button" data-tool="spawn">Set start</button>
+          <button class="button" data-tool="test">Move player</button>
+        </div>
+        <div id="editor-stage" class="editor-stage"><canvas id="editor-map" aria-label="Map editor"></canvas></div>
+        <div class="map-footer"><span id="map-coordinates">—</span><span id="map-dimensions"></span><span id="editor-tool-hint"></span></div>
+        <details class="map-settings"><summary>Map settings &amp; encounter pool</summary><form id="map-settings"></form></details>
+      </section>
+      <aside class="studio-card inspector">
+        <header><h2>Inspector</h2><button class="button" id="clear-selection">Clear</button></header>
+        <label class="editor-field entity-select">Entity <select id="entity-picker" aria-label="Placed entity"></select></label>
+        <div id="inspector"></div>
+      </aside>
+    </section>
+
+    <section id="catalog-tab" class="studio-card data-editor" hidden></section>
+    <section id="dialogue-tab" class="studio-card data-editor" hidden></section>
+    <section id="save-tab" class="studio-card data-editor" hidden></section>
+
+    <input type="file" id="import" accept="application/json,.json" hidden>
+  </main>
+  <script type="module" src="/backstage/admin.js"></script>
+</body>
+</html>

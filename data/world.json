@@ -1,0 +1,1690 @@
+{
+  "start": {
+    "map": "dockside",
+    "x": 14,
+    "y": 11
+  },
+  "starter": "beatcub",
+  "starters": [
+    "beatcub",
+    "hiwire",
+    "groovetad"
+  ],
+  "maps": {
+    "dockside": {
+      "name": "The Dockside",
+      "subtitle": "DOCKSIDE DISTRICT",
+      "rows": [
+        "tttttttttttttttttttttttttttttt",
+        "tttttttttttttttttttttttttttttt",
+        "ttgggggggggggggggggggggggggttt",
+        "ttt.......tt......t.t.......tt",
+        "tt.sssssss..ssssss.t.ssssssstt",
+        "tt.sssssss..ssssss...ssssssstt",
+        "tt.sssssss..ssssss...ssssssstt",
+        "tt.sssssss..ssssss...ssssssstt",
+        "tt:::::::::::::::::::::::::::t",
+        "=============+++==============",
+        "=============+++==============",
+        "tt::::::::::::::::::::::::::::",
+        "tttwwwwwwgt..:::...ggggggggtgg",
+        "ttgwwwwwwgg..:::...gddwwwwwwtt",
+        "ttgwwwwwwgg.ssssss.gddwwwwwwgg",
+        "ttgwwwwwwgg.ssssss.gdd~~~~~~~~",
+        "ttttggggttg..:::...gddddddd~~~",
+        "~~~~~~~~~~~~~~~~~~~tdd~~~~~~~~"
+      ],
+      "entities": [
+        {
+          "id": "basement",
+          "kind": "label",
+          "name": "Juno Byte",
+          "x": 6,
+          "y": 8,
+          "art": "person",
+          "color": "#c994f3",
+          "solid": true,
+          "dialogue": "basement",
+          "after": "basement_after",
+          "squad": [
+            {
+              "species": "kickmoth",
+              "level": 3
+            }
+          ],
+          "reward": 180,
+          "sets": {
+            "signed_basement": true
+          }
+        },
+        {
+          "id": "tape",
+          "kind": "label",
+          "name": "Sol Needle",
+          "x": 15,
+          "y": 13,
+          "art": "person",
+          "color": "#e9b47d",
+          "solid": true,
+          "dialogue": "tape",
+          "after": "tape_after",
+          "requires": {
+            "signed_basement": true
+          },
+          "sets": {
+            "signed_tape": true
+          },
+          "locked": "Juno runs the first set at Basement Rhythms. Come back with their co-sign.",
+          "squad": [
+            {
+              "species": "vinylfin",
+              "level": 5
+            },
+            {
+              "species": "staticat",
+              "level": 5
+            }
+          ],
+          "reward": 260
+        },
+        {
+          "id": "echo",
+          "kind": "label",
+          "name": "Rae Echo",
+          "x": 24,
+          "y": 8,
+          "art": "person",
+          "color": "#f68eae",
+          "solid": true,
+          "dialogue": "echo",
+          "after": "echo_after",
+          "requires": {
+            "signed_basement": true,
+            "signed_tape": true
+          },
+          "sets": {
+            "signed_echo": true
+          },
+          "locked": "Show me the Basement Rhythms and Tape Deck co-signs before we battle.",
+          "squad": [
+            {
+              "species": "neonbat",
+              "level": 6
+            },
+            {
+              "species": "groovetad",
+              "level": 7
+            }
+          ],
+          "reward": 380
+        },
+        {
+          "id": "mira",
+          "kind": "npc",
+          "name": "Mira Verse",
+          "x": 14,
+          "y": 10,
+          "art": "person",
+          "color": "#80e8c9",
+          "solid": true,
+          "dialogue": "mira"
+        },
+        {
+          "id": "clinic",
+          "kind": "heal",
+          "name": "Reverb Clinic",
+          "x": 15,
+          "y": 8,
+          "art": "person",
+          "color": "#85e7c4",
+          "solid": true
+        },
+        {
+          "id": "crate-shop",
+          "kind": "shop",
+          "name": "Crate Market",
+          "x": 10,
+          "y": 12,
+          "art": "person",
+          "color": "#f8ce8f",
+          "solid": true,
+          "dialogue": "crate",
+          "stock": [
+            "demo",
+            "master",
+            "water",
+            "honey",
+            "lozenge",
+            "encore",
+            "filter",
+            "pack",
+            "amp",
+            "flow-sheet"
+          ]
+        },
+        {
+          "id": "roadie",
+          "kind": "npc",
+          "name": "Dock Roadie",
+          "x": 20,
+          "y": 12,
+          "art": "person",
+          "color": "#f0bd83",
+          "solid": true,
+          "dialogue": "roadie"
+        },
+        {
+          "id": "dancer",
+          "kind": "npc",
+          "name": "Flip",
+          "x": 19,
+          "y": 8,
+          "art": "person",
+          "color": "#80b9ee",
+          "solid": true,
+          "dialogue": "dancer"
+        },
+        {
+          "id": "benny",
+          "kind": "npc",
+          "name": "Benny Cuts",
+          "x": 10,
+          "y": 7,
+          "art": "person",
+          "color": "#f2c894",
+          "solid": true,
+          "dialogue": "benny"
+        },
+        {
+          "id": "cypher",
+          "kind": "rival",
+          "name": "Kip Drums",
+          "x": 8,
+          "y": 12,
+          "art": "person",
+          "color": "#c0d889",
+          "solid": true,
+          "dialogue": "cypher",
+          "squad": [
+            {
+              "species": "kickmoth",
+              "level": 3
+            }
+          ],
+          "reward": 85
+        },
+        {
+          "id": "skater",
+          "kind": "rival",
+          "name": "Rink",
+          "x": 23,
+          "y": 12,
+          "art": "person",
+          "color": "#ad9cf7",
+          "solid": true,
+          "dialogue": "skater",
+          "squad": [
+            {
+              "species": "neonbat",
+              "level": 4
+            },
+            {
+              "species": "vinylfin",
+              "level": 4
+            }
+          ],
+          "reward": 140,
+          "when": {
+            "signed_basement": true
+          }
+        },
+        {
+          "id": "demo-drop",
+          "kind": "item",
+          "name": "Demo Tape",
+          "x": 4,
+          "y": 14,
+          "art": "cassette",
+          "item": "demo",
+          "quantity": 2
+        },
+        {
+          "id": "water-drop",
+          "kind": "item",
+          "name": "Throat Water",
+          "x": 17,
+          "y": 12,
+          "art": "bottle",
+          "item": "water",
+          "quantity": 1
+        },
+        {
+          "id": "master-drop",
+          "kind": "item",
+          "name": "Master Tape",
+          "x": 25,
+          "y": 14,
+          "art": "cassette",
+          "item": "master",
+          "quantity": 1
+        },
+        {
+          "id": "filter-drop",
+          "kind": "item",
+          "name": "Noise Filter",
+          "x": 11,
+          "y": 16,
+          "art": "filter",
+          "item": "filter",
+          "quantity": 1
+        },
+        {
+          "id": "east",
+          "kind": "exit",
+          "name": "Wander Onys Flagship",
+          "x": 29,
+          "y": 10,
+          "art": "portal",
+          "requires": {
+            "signed_basement": true,
+            "signed_tape": true,
+            "signed_echo": true
+          },
+          "locked": "The flagship only takes challenges backed by all three labels.",
+          "destination": {
+            "map": "onys",
+            "x": 7,
+            "y": 10
+          }
+        },
+        {
+          "id": "violet-light",
+          "kind": "light",
+          "name": "Basement glow",
+          "x": 6,
+          "y": 7,
+          "art": "",
+          "color": "#b664fa",
+          "radius": 4.7,
+          "strength": 0.26,
+          "beam": true
+        },
+        {
+          "id": "clinic-light",
+          "kind": "light",
+          "name": "Clinic glow",
+          "x": 15,
+          "y": 6,
+          "art": "",
+          "color": "#61f7c4",
+          "radius": 3.8,
+          "strength": 0.24
+        },
+        {
+          "id": "rose-light",
+          "kind": "light",
+          "name": "Echo House glow",
+          "x": 24,
+          "y": 6,
+          "art": "",
+          "color": "#f78ac2",
+          "radius": 4.0,
+          "strength": 0.22,
+          "beam": true
+        },
+        {
+          "id": "pier-light",
+          "kind": "light",
+          "name": "Pier lamp",
+          "x": 23,
+          "y": 15,
+          "art": "",
+          "color": "#ffc37e",
+          "radius": 2.6,
+          "strength": 0.23
+        },
+        {
+          "id": "basement-facade",
+          "kind": "decor",
+          "name": "Basement Rhythms facade",
+          "x": 6,
+          "y": 7,
+          "art": "basement",
+          "color": "#8c69c0"
+        },
+        {
+          "id": "clinic-facade",
+          "kind": "decor",
+          "name": "Reverb Clinic facade",
+          "x": 15,
+          "y": 7,
+          "art": "clinic",
+          "color": "#52b9a5"
+        },
+        {
+          "id": "echo-facade",
+          "kind": "decor",
+          "name": "Echo House facade",
+          "x": 24,
+          "y": 7,
+          "art": "echo",
+          "color": "#c96e9f"
+        },
+        {
+          "id": "tape-facade",
+          "kind": "decor",
+          "name": "Tape Deck Pier stage",
+          "x": 15,
+          "y": 15,
+          "art": "tape",
+          "color": "#bf8c63"
+        },
+        {
+          "id": "left-lamp",
+          "kind": "decor",
+          "name": "Streetlight",
+          "x": 3,
+          "y": 8,
+          "art": "lamp"
+        },
+        {
+          "id": "center-lamp",
+          "kind": "decor",
+          "name": "Streetlight",
+          "x": 17,
+          "y": 11,
+          "art": "lamp"
+        },
+        {
+          "id": "east-lamp",
+          "kind": "decor",
+          "name": "Streetlight",
+          "x": 27,
+          "y": 8,
+          "art": "lamp"
+        },
+        {
+          "id": "pier-lamp",
+          "kind": "decor",
+          "name": "Pier lamp post",
+          "x": 23,
+          "y": 16,
+          "art": "lamp"
+        },
+        {
+          "id": "speakers",
+          "kind": "decor",
+          "name": "Cypher monitors",
+          "x": 6,
+          "y": 12,
+          "art": "speaker"
+        },
+        {
+          "id": "planter-west",
+          "kind": "decor",
+          "name": "Flowerbed",
+          "x": 11,
+          "y": 8,
+          "art": "planter"
+        },
+        {
+          "id": "planter-east",
+          "kind": "decor",
+          "name": "Flowerbed",
+          "x": 19,
+          "y": 11,
+          "art": "planter"
+        },
+        {
+          "id": "bench",
+          "kind": "decor",
+          "name": "Pier bench",
+          "x": 24,
+          "y": 16,
+          "art": "bench"
+        },
+        {
+          "id": "tags",
+          "kind": "decor",
+          "name": "Street mural",
+          "x": 10,
+          "y": 5,
+          "art": "mural"
+        },
+        {
+          "id": "flow-drop",
+          "kind": "item",
+          "name": "Flow Sheet",
+          "x": 18,
+          "y": 13,
+          "art": "spark",
+          "item": "flow-sheet",
+          "quantity": 1
+        },
+        {
+          "id": "pier-freestyler",
+          "kind": "wild",
+          "name": "Vinylfin",
+          "x": 25,
+          "y": 16,
+          "solid": true,
+          "art": "fish",
+          "color": "#8eddf6",
+          "squad": [
+            {
+              "species": "vinylfin",
+              "level": 3
+            }
+          ]
+        }
+      ],
+      "encounters": [
+        {
+          "species": "vinylfin",
+          "level": 3
+        },
+        {
+          "species": "staticat",
+          "level": 3
+        },
+        {
+          "species": "kickmoth",
+          "level": 2
+        },
+        {
+          "species": "neonbat",
+          "level": 4,
+          "when": {
+            "signed_basement": true
+          }
+        }
+      ],
+      "encounter_rate": 22
+    },
+    "onys": {
+      "name": "Onys Flagship",
+      "subtitle": "WANDER ONYS CO.",
+      "rows": [
+        "###############",
+        "#fffffffffffff#",
+        "#f##fcccccf##f#",
+        "#f##fcccccf##f#",
+        "#f##fcccccf##f#",
+        "#ffffcccccffff#",
+        "#ffffcccccffff#",
+        "#ffffcccccffff#",
+        "#ffffcccccffff#",
+        "#ffffcccccffff#",
+        "#fffffffffffff#",
+        "#######c#######"
+      ],
+      "entities": [
+        {
+          "id": "chair",
+          "kind": "boss",
+          "name": "Wander Onys",
+          "x": 7,
+          "y": 3,
+          "art": "person",
+          "color": "#dfb4fe",
+          "solid": true,
+          "dialogue": "onys",
+          "after": "onys_after",
+          "requires": {
+            "signed_basement": true,
+            "signed_tape": true,
+            "signed_echo": true
+          },
+          "squad": [
+            {
+              "species": "nightwire",
+              "level": 8
+            },
+            {
+              "species": "voxshade",
+              "level": 9
+            },
+            {
+              "species": "breaklynx",
+              "level": 10
+            }
+          ],
+          "reward": 750,
+          "sets": {
+            "beat_onys": true
+          }
+        },
+        {
+          "id": "lobby",
+          "kind": "npc",
+          "name": "Onys Reception",
+          "x": 4,
+          "y": 8,
+          "art": "person",
+          "color": "#acd4f0",
+          "solid": true,
+          "dialogue": "guard"
+        },
+        {
+          "id": "soundcheck",
+          "kind": "heal",
+          "name": "Soundcheck Booth",
+          "x": 10,
+          "y": 8,
+          "art": "person",
+          "color": "#85e7c4",
+          "solid": true
+        },
+        {
+          "id": "extra-encore",
+          "kind": "item",
+          "name": "Encore Patch",
+          "x": 12,
+          "y": 8,
+          "art": "spark",
+          "item": "encore",
+          "quantity": 2
+        },
+        {
+          "id": "extra-battery",
+          "kind": "item",
+          "name": "Battery Pack",
+          "x": 2,
+          "y": 7,
+          "art": "battery",
+          "item": "pack"
+        },
+        {
+          "id": "extra-amp",
+          "kind": "item",
+          "name": "Pocket Amp",
+          "x": 11,
+          "y": 6,
+          "art": "speaker",
+          "item": "amp"
+        },
+        {
+          "id": "extra-honey",
+          "kind": "item",
+          "name": "Honey Shot",
+          "x": 4,
+          "y": 6,
+          "art": "bottle",
+          "item": "honey"
+        },
+        {
+          "id": "extra-lozenge",
+          "kind": "item",
+          "name": "Vocal Lozenge",
+          "x": 3,
+          "y": 8,
+          "art": "capsule",
+          "item": "lozenge"
+        },
+        {
+          "id": "lobby-west",
+          "kind": "light",
+          "name": "West spotlight",
+          "x": 4,
+          "y": 4,
+          "art": "",
+          "color": "#b793ff",
+          "radius": 4.8,
+          "strength": 0.33,
+          "beam": true
+        },
+        {
+          "id": "lobby-east",
+          "kind": "light",
+          "name": "East spotlight",
+          "x": 10,
+          "y": 4,
+          "art": "",
+          "color": "#f67dd9",
+          "radius": 4.8,
+          "strength": 0.3,
+          "beam": true
+        },
+        {
+          "id": "sign",
+          "kind": "decor",
+          "name": "Onys stage",
+          "x": 7,
+          "y": 2,
+          "art": "onys",
+          "color": "#b17bd8"
+        },
+        {
+          "id": "left-speaker",
+          "kind": "decor",
+          "name": "Monitor tower",
+          "x": 4,
+          "y": 2,
+          "art": "speaker"
+        },
+        {
+          "id": "right-speaker",
+          "kind": "decor",
+          "name": "Monitor tower",
+          "x": 10,
+          "y": 2,
+          "art": "speaker"
+        },
+        {
+          "id": "out",
+          "kind": "exit",
+          "name": "Dockside avenue",
+          "x": 7,
+          "y": 11,
+          "art": "portal",
+          "destination": {
+            "map": "dockside",
+            "x": 28,
+            "y": 10
+          }
+        }
+      ],
+      "encounters": [],
+      "encounter_rate": 0
+    }
+  },
+  "tiles": {
+    ".": {
+      "name": "Cobblestones",
+      "color": "#45465e",
+      "art": "paving",
+      "blocked": false,
+      "encounters": false
+    },
+    "=": {
+      "name": "Main street",
+      "color": "#56526a",
+      "art": "road",
+      "blocked": false,
+      "encounters": false
+    },
+    "+": {
+      "name": "Crosswalk",
+      "color": "#56526a",
+      "art": "crosswalk",
+      "blocked": false,
+      "encounters": false
+    },
+    ":": {
+      "name": "Sidewalk",
+      "color": "#717385",
+      "art": "sidewalk",
+      "blocked": false,
+      "encounters": false
+    },
+    "g": {
+      "name": "Low grass",
+      "color": "#2d6258",
+      "art": "grass",
+      "blocked": false,
+      "encounters": false
+    },
+    "w": {
+      "name": "Wild sound patch",
+      "color": "#357a60",
+      "art": "wild",
+      "blocked": false,
+      "encounters": true
+    },
+    "t": {
+      "name": "Dense canopy",
+      "color": "#214b47",
+      "art": "tree",
+      "blocked": true,
+      "encounters": false
+    },
+    "h": {
+      "name": "Hedge",
+      "color": "#265247",
+      "art": "hedge",
+      "blocked": true,
+      "encounters": false
+    },
+    "~": {
+      "name": "Harbor water",
+      "color": "#183c52",
+      "art": "water",
+      "blocked": true,
+      "encounters": false
+    },
+    "d": {
+      "name": "Boardwalk",
+      "color": "#67556a",
+      "art": "deck",
+      "blocked": false,
+      "encounters": false
+    },
+    "f": {
+      "name": "Studio floor",
+      "color": "#393050",
+      "art": "floor",
+      "blocked": false,
+      "encounters": false
+    },
+    "#": {
+      "name": "Wall",
+      "color": "#28223f",
+      "art": "wall",
+      "blocked": true,
+      "encounters": false
+    },
+    "c": {
+      "name": "Stage rug",
+      "color": "#6b365d",
+      "art": "carpet",
+      "blocked": false,
+      "encounters": false
+    },
+    "s": {
+      "name": "Structure footprint",
+      "color": "#3b3448",
+      "art": "paving",
+      "blocked": true,
+      "encounters": false
+    }
+  },
+  "species": {
+    "beatcub": {
+      "name": "Beatcub",
+      "style": "boom",
+      "art": "cub",
+      "color": "#d5a7f3",
+      "description": "A crate-digger who keeps perfect time on anything hollow.",
+      "hp": 20,
+      "attack": 14,
+      "defense": 15,
+      "speed": 11,
+      "catch_rate": 52,
+      "learns": [
+        {
+          "at": 1,
+          "move": "couplet"
+        },
+        {
+          "at": 3,
+          "move": "punch"
+        },
+        {
+          "at": 5,
+          "move": "boost"
+        },
+        {
+          "at": 7,
+          "move": "break"
+        },
+        {
+          "at": 10,
+          "move": "quake"
+        }
+      ],
+      "evolves": {
+        "at": 12,
+        "into": "breaklynx"
+      }
+    },
+    "breaklynx": {
+      "name": "Breaklynx",
+      "style": "boom",
+      "art": "lynx",
+      "color": "#deb4ff",
+      "description": "The block feels every step when Breaklynx drops a kick.",
+      "hp": 37,
+      "attack": 25,
+      "defense": 22,
+      "speed": 17,
+      "catch_rate": 20,
+      "learns": [
+        {
+          "at": 1,
+          "move": "punch"
+        },
+        {
+          "at": 5,
+          "move": "boost"
+        },
+        {
+          "at": 7,
+          "move": "break"
+        },
+        {
+          "at": 10,
+          "move": "quake"
+        },
+        {
+          "at": 15,
+          "move": "rest"
+        }
+      ]
+    },
+    "hiwire": {
+      "name": "Hiwire",
+      "style": "drill",
+      "art": "jackal",
+      "color": "#f8a2bd",
+      "description": "A midnight runner with a razor-sharp opening bar.",
+      "hp": 19,
+      "attack": 16,
+      "defense": 11,
+      "speed": 16,
+      "catch_rate": 46,
+      "learns": [
+        {
+          "at": 1,
+          "move": "couplet"
+        },
+        {
+          "at": 3,
+          "move": "ice"
+        },
+        {
+          "at": 5,
+          "move": "grit"
+        },
+        {
+          "at": 7,
+          "move": "boost"
+        },
+        {
+          "at": 10,
+          "move": "siren"
+        }
+      ],
+      "evolves": {
+        "at": 12,
+        "into": "nightwire"
+      }
+    },
+    "nightwire": {
+      "name": "Nightwire",
+      "style": "drill",
+      "art": "jackal",
+      "color": "#ee76ad",
+      "description": "It carries echoes of underground cyphers in its headphones.",
+      "hp": 31,
+      "attack": 27,
+      "defense": 18,
+      "speed": 24,
+      "catch_rate": 21,
+      "learns": [
+        {
+          "at": 1,
+          "move": "ice"
+        },
+        {
+          "at": 5,
+          "move": "grit"
+        },
+        {
+          "at": 7,
+          "move": "boost"
+        },
+        {
+          "at": 10,
+          "move": "siren"
+        },
+        {
+          "at": 15,
+          "move": "stutter"
+        }
+      ]
+    },
+    "groovetad": {
+      "name": "Groovetad",
+      "style": "funk",
+      "art": "frog",
+      "color": "#8fe0b6",
+      "description": "A tiny producer with a bottomless supply of basslines.",
+      "hp": 23,
+      "attack": 12,
+      "defense": 14,
+      "speed": 13,
+      "catch_rate": 50,
+      "learns": [
+        {
+          "at": 1,
+          "move": "couplet"
+        },
+        {
+          "at": 3,
+          "move": "groove"
+        },
+        {
+          "at": 5,
+          "move": "clap"
+        },
+        {
+          "at": 7,
+          "move": "loop"
+        },
+        {
+          "at": 10,
+          "move": "hook"
+        }
+      ],
+      "evolves": {
+        "at": 12,
+        "into": "grooveback"
+      }
+    },
+    "grooveback": {
+      "name": "Grooveback",
+      "style": "funk",
+      "art": "frog",
+      "color": "#5ddec3",
+      "description": "Its four-legged pocket groove gets entire piers dancing.",
+      "hp": 38,
+      "attack": 21,
+      "defense": 23,
+      "speed": 19,
+      "catch_rate": 20,
+      "learns": [
+        {
+          "at": 1,
+          "move": "groove"
+        },
+        {
+          "at": 5,
+          "move": "clap"
+        },
+        {
+          "at": 7,
+          "move": "loop"
+        },
+        {
+          "at": 10,
+          "move": "hook"
+        },
+        {
+          "at": 15,
+          "move": "rest"
+        }
+      ]
+    },
+    "vinylfin": {
+      "name": "Vinylfin",
+      "style": "funk",
+      "art": "fish",
+      "color": "#8eddf6",
+      "description": "It samples the harbor waves with its record-shaped tail.",
+      "hp": 20,
+      "attack": 11,
+      "defense": 14,
+      "speed": 13,
+      "catch_rate": 63,
+      "learns": [
+        {
+          "at": 1,
+          "move": "clap"
+        },
+        {
+          "at": 3,
+          "move": "groove"
+        },
+        {
+          "at": 7,
+          "move": "loop"
+        },
+        {
+          "at": 10,
+          "move": "hook"
+        }
+      ]
+    },
+    "staticat": {
+      "name": "Staticat",
+      "style": "glitch",
+      "art": "cat",
+      "color": "#a0a7ff",
+      "description": "Purrs in white noise and hides between radio stations.",
+      "hp": 17,
+      "attack": 14,
+      "defense": 10,
+      "speed": 19,
+      "catch_rate": 55,
+      "learns": [
+        {
+          "at": 1,
+          "move": "couplet"
+        },
+        {
+          "at": 3,
+          "move": "stutter"
+        },
+        {
+          "at": 6,
+          "move": "boost"
+        },
+        {
+          "at": 9,
+          "move": "sample"
+        }
+      ]
+    },
+    "kickmoth": {
+      "name": "Kickmoth",
+      "style": "boom",
+      "art": "moth",
+      "color": "#f5cf83",
+      "description": "Every flutter lays down a kick followed by a soft snare.",
+      "hp": 16,
+      "attack": 13,
+      "defense": 10,
+      "speed": 14,
+      "catch_rate": 69,
+      "learns": [
+        {
+          "at": 1,
+          "move": "couplet"
+        },
+        {
+          "at": 3,
+          "move": "punch"
+        },
+        {
+          "at": 7,
+          "move": "break"
+        }
+      ]
+    },
+    "neonbat": {
+      "name": "Neonbat",
+      "style": "drill",
+      "art": "bat",
+      "color": "#f497e3",
+      "description": "Glides over back alleys where open mics go on past midnight.",
+      "hp": 18,
+      "attack": 14,
+      "defense": 10,
+      "speed": 18,
+      "catch_rate": 52,
+      "learns": [
+        {
+          "at": 1,
+          "move": "ice"
+        },
+        {
+          "at": 5,
+          "move": "grit"
+        },
+        {
+          "at": 9,
+          "move": "siren"
+        }
+      ]
+    },
+    "voxshade": {
+      "name": "Voxshade",
+      "style": "glitch",
+      "art": "ghost",
+      "color": "#b5a5fd",
+      "description": "Wander Onys tried to trademark its echo. It still slips the contract.",
+      "hp": 29,
+      "attack": 20,
+      "defense": 17,
+      "speed": 19,
+      "catch_rate": 25,
+      "learns": [
+        {
+          "at": 1,
+          "move": "stutter"
+        },
+        {
+          "at": 6,
+          "move": "boost"
+        },
+        {
+          "at": 9,
+          "move": "sample"
+        },
+        {
+          "at": 12,
+          "move": "rest"
+        }
+      ]
+    }
+  },
+  "moves": {
+    "couplet": {
+      "name": "Quick Couplets",
+      "style": "plain",
+      "description": "Two clean bars to set the pace.",
+      "power": 25,
+      "accuracy": 100,
+      "pp": 28
+    },
+    "punch": {
+      "name": "Punchline",
+      "style": "boom",
+      "description": "A heavy punch delivered on the snare.",
+      "power": 35,
+      "accuracy": 100,
+      "pp": 18
+    },
+    "break": {
+      "name": "Breakbeat",
+      "style": "boom",
+      "description": "A chopped break that can throw off the beat.",
+      "power": 44,
+      "accuracy": 95,
+      "pp": 12,
+      "effect": "stun",
+      "chance": 20
+    },
+    "quake": {
+      "name": "Bassquake",
+      "style": "boom",
+      "description": "A floor-shaking closer.",
+      "power": 57,
+      "accuracy": 89,
+      "pp": 8
+    },
+    "ice": {
+      "name": "Cold Open",
+      "style": "drill",
+      "description": "A chilly opener that gets in first.",
+      "power": 30,
+      "accuracy": 100,
+      "pp": 20,
+      "priority": 1
+    },
+    "grit": {
+      "name": "Gravel Bars",
+      "style": "drill",
+      "description": "A harsh verse that can make the rival hoarse.",
+      "power": 40,
+      "accuracy": 95,
+      "pp": 14,
+      "effect": "burn",
+      "chance": 28
+    },
+    "siren": {
+      "name": "Siren Verse",
+      "style": "drill",
+      "description": "Blistering street bars in double time.",
+      "power": 56,
+      "accuracy": 90,
+      "pp": 8,
+      "effect": "burn",
+      "chance": 25
+    },
+    "groove": {
+      "name": "Pocket Groove",
+      "style": "funk",
+      "description": "An easy groove with a sharp offbeat.",
+      "power": 34,
+      "accuracy": 100,
+      "pp": 18
+    },
+    "loop": {
+      "name": "Loop Back",
+      "style": "funk",
+      "description": "Recycle the groove to recover some HP.",
+      "power": 41,
+      "accuracy": 95,
+      "pp": 13,
+      "effect": "drain"
+    },
+    "rest": {
+      "name": "Breath Control",
+      "style": "plain",
+      "description": "Recover a third of your max HP.",
+      "power": 0,
+      "accuracy": 100,
+      "pp": 8,
+      "effect": "heal",
+      "chance": 100
+    },
+    "stutter": {
+      "name": "Stutter Edit",
+      "style": "glitch",
+      "description": "A skipped beat can stun the rival.",
+      "power": 35,
+      "accuracy": 95,
+      "pp": 15,
+      "effect": "stun",
+      "chance": 25
+    },
+    "boost": {
+      "name": "Double Time",
+      "style": "plain",
+      "description": "Raise tempo and move earlier in the turn.",
+      "power": 0,
+      "accuracy": 100,
+      "pp": 15,
+      "effect": "tempo",
+      "chance": 100
+    },
+    "sample": {
+      "name": "Sample Flip",
+      "style": "glitch",
+      "description": "Rework the hook and steal the crowd back.",
+      "power": 54,
+      "accuracy": 90,
+      "pp": 8,
+      "effect": "drain"
+    },
+    "clap": {
+      "name": "First Clap",
+      "style": "funk",
+      "description": "A fast clap that gets the first word.",
+      "power": 26,
+      "accuracy": 100,
+      "pp": 23,
+      "priority": 1
+    },
+    "hook": {
+      "name": "Crowd Hook",
+      "style": "funk",
+      "description": "An infectious hook brings the whole room in.",
+      "power": 54,
+      "accuracy": 96,
+      "pp": 9
+    }
+  },
+  "items": {
+    "demo": {
+      "name": "Demo Tape",
+      "description": "Offer a deal to a wild Freestylomon. Lower HP improves the odds.",
+      "effect": "capture",
+      "amount": 0,
+      "price": 35,
+      "icon": "cassette"
+    },
+    "master": {
+      "name": "Master Tape",
+      "description": "A polished demo with better signing odds.",
+      "effect": "capture",
+      "amount": 23,
+      "price": 90,
+      "icon": "cassette"
+    },
+    "water": {
+      "name": "Throat Water",
+      "description": "Restores 22 HP to a conscious crewmate.",
+      "effect": "heal",
+      "amount": 22,
+      "price": 45,
+      "icon": "bottle"
+    },
+    "honey": {
+      "name": "Honey Shot",
+      "description": "Restores 48 HP to a conscious crewmate.",
+      "effect": "heal",
+      "amount": 48,
+      "price": 100,
+      "icon": "bottle"
+    },
+    "lozenge": {
+      "name": "Vocal Lozenge",
+      "description": "Clears hoarseness or stun from a crewmate.",
+      "effect": "cleanse",
+      "amount": 0,
+      "price": 55,
+      "icon": "capsule"
+    },
+    "encore": {
+      "name": "Encore Patch",
+      "description": "Revives a crewmate with half their max HP.",
+      "effect": "revive",
+      "amount": 50,
+      "price": 150,
+      "icon": "spark"
+    },
+    "filter": {
+      "name": "Noise Filter",
+      "description": "Prevents wild encounters for 30 steps.",
+      "effect": "repel",
+      "amount": 30,
+      "price": 70,
+      "icon": "filter"
+    },
+    "pack": {
+      "name": "Battery Pack",
+      "description": "Restores 7 PP to each flow.",
+      "effect": "restore",
+      "amount": 7,
+      "price": 85,
+      "icon": "battery"
+    },
+    "amp": {
+      "name": "Pocket Amp",
+      "description": "Equip it to add 3 to the base damage of damaging flows.",
+      "effect": "held",
+      "amount": 3,
+      "price": 190,
+      "icon": "speaker"
+    },
+    "flow-sheet": {
+      "name": "Flow Sheet: Stutter Edit",
+      "description": "Teaches Stutter Edit. Replaces the oldest flow if all four slots are full.",
+      "effect": "teach",
+      "amount": 0,
+      "price": 180,
+      "icon": "spark",
+      "flow": "stutter"
+    }
+  },
+  "styles": {
+    "plain": {
+      "name": "Spoken",
+      "color": "#bdc2d9",
+      "strong": [],
+      "weak": []
+    },
+    "boom": {
+      "name": "Boom Bap",
+      "color": "#bced75",
+      "strong": [
+        "drill"
+      ],
+      "weak": [
+        "funk"
+      ]
+    },
+    "drill": {
+      "name": "Drill",
+      "color": "#f28eae",
+      "strong": [
+        "funk"
+      ],
+      "weak": [
+        "boom"
+      ]
+    },
+    "funk": {
+      "name": "Funk",
+      "color": "#61ddc7",
+      "strong": [
+        "boom"
+      ],
+      "weak": [
+        "drill"
+      ]
+    },
+    "glitch": {
+      "name": "Glitch",
+      "color": "#bb9bff",
+      "strong": [
+        "glitch"
+      ],
+      "weak": []
+    }
+  },
+  "dialogues": {
+    "mira": [
+      {
+        "lines": [
+          "You’ve got your first crewmate. Want to audition the other two?"
+        ],
+        "when": {
+          "heard_pitch": true
+        },
+        "choices": [
+          {
+            "label": "Audition starters",
+            "action": "starter"
+          },
+          {
+            "label": "See you out there"
+          }
+        ]
+      },
+      {
+        "lines": [
+          "Wander Onys is buying this whole district one contract at a time.",
+          "Earn the trust of three indie labels in open-mic sets. Together, we can challenge their flagship."
+        ],
+        "sets": {
+          "heard_pitch": true
+        },
+        "choices": [
+          {
+            "label": "Audition starters",
+            "action": "starter"
+          },
+          {
+            "label": "I’ll start with Beatcub"
+          }
+        ]
+      }
+    ],
+    "basement": [
+      {
+        "lines": [
+          "I’m Juno. Basement Rhythms keeps the city’s oldest records spinning.",
+          "Show me you can hold a set and I’ll sign on."
+        ],
+        "choices": [
+          {
+            "label": "Take the mic",
+            "action": "battle"
+          },
+          {
+            "label": "Come back later"
+          }
+        ]
+      }
+    ],
+    "tape": [
+      {
+        "lines": [
+          "No ghostwriters on this pier. Show my crew you can build a verse in the moment."
+        ],
+        "choices": [
+          {
+            "label": "Start the set",
+            "action": "battle"
+          },
+          {
+            "label": "Come back later"
+          }
+        ]
+      }
+    ],
+    "echo": [
+      {
+        "lines": [
+          "You’ve got two labels behind you. Let’s see if you can carry the room."
+        ],
+        "choices": [
+          {
+            "label": "Start the set",
+            "action": "battle"
+          },
+          {
+            "label": "Come back later"
+          }
+        ]
+      }
+    ],
+    "basement_after": [
+      {
+        "lines": [
+          "Basement Rhythms is in. Look for Sol down at Tape Deck Pier."
+        ]
+      }
+    ],
+    "tape_after": [
+      {
+        "lines": [
+          "Tape Deck is with you. Echo House is up the east end of the avenue."
+        ]
+      }
+    ],
+    "echo_after": [
+      {
+        "lines": [
+          "All three labels are on the bill. Head east to the Wander Onys flagship."
+        ]
+      }
+    ],
+    "onys": [
+      {
+        "lines": [
+          "You brought the whole district to my doorstep. If you want the mic, take it."
+        ],
+        "choices": [
+          {
+            "label": "Challenge Wander Onys",
+            "action": "battle"
+          },
+          {
+            "label": "Prepare first"
+          }
+        ]
+      }
+    ],
+    "onys_after": [
+      {
+        "lines": [
+          "The broadcast is yours. Dockside’s artists can keep their own masters."
+        ]
+      }
+    ],
+    "crate": [
+      {
+        "lines": [
+          "Rare imports, demo tapes, vocal remedies. Everything still analog."
+        ],
+        "choices": [
+          {
+            "label": "Browse stock",
+            "action": "shop"
+          },
+          {
+            "label": "Maybe later"
+          }
+        ]
+      }
+    ],
+    "roadie": [
+      {
+        "lines": [
+          "The tall sound grass near the docks is full of unsigned artists. Wear them down and offer a Demo Tape."
+        ]
+      }
+    ],
+    "dancer": [
+      {
+        "lines": [
+          "Boom Bap rattles Drill. Drill cuts through Funk. Funk goes right under Boom Bap."
+        ]
+      }
+    ],
+    "benny": [
+      {
+        "lines": [
+          "A good producer comes prepared. Here’s a spare demo."
+        ],
+        "when": {
+          "got_demo": false
+        },
+        "choices": [
+          {
+            "label": "Take the tape",
+            "give": "demo",
+            "sets": {
+              "got_demo": true
+            },
+            "next": "benny_done"
+          },
+          {
+            "label": "Later"
+          }
+        ]
+      },
+      {
+        "lines": [
+          "There’s always another beat on Dockside."
+        ]
+      }
+    ],
+    "benny_done": [
+      {
+        "lines": [
+          "Keep an ear out by the water."
+        ]
+      }
+    ],
+    "cypher": [
+      {
+        "lines": [
+          "One round. Two mics. I’ve got a Kickmoth who wants the opening verse."
+        ],
+        "choices": [
+          {
+            "label": "Join the cypher",
+            "action": "battle"
+          },
+          {
+            "label": "Keep walking"
+          }
+        ]
+      }
+    ],
+    "skater": [
+      {
+        "lines": [
+          "I found these monitors in a dumpster. They still sound better than the major’s mixes."
+        ],
+        "choices": [
+          {
+            "label": "Trade bars",
+            "action": "battle"
+          },
+          {
+            "label": "Keep walking"
+          }
+        ]
+      }
+    ],
+    "guard": [
+      {
+        "lines": [
+          "Signed artists only. Your three label crews are on the guest list, so go ahead."
+        ]
+      }
+    ]
+  },
+  "objectives": [
+    {
+      "name": "Basement Rhythms",
+      "detail": "Find Juno Byte outside the north-west studio.",
+      "flag": "signed_basement"
+    },
+    {
+      "name": "Tape Deck Pier",
+      "detail": "Meet Sol Needle on the boardwalk stage.",
+      "flag": "signed_tape"
+    },
+    {
+      "name": "Echo House",
+      "detail": "Challenge Rae Echo outside the east studio.",
+      "flag": "signed_echo"
+    },
+    {
+      "name": "Wander Onys Co.",
+      "detail": "Take all three co-signs to the east gate.",
+      "flag": "beat_onys"
+    }
+  ],
+  "initial_flags": {
+    "heard_pitch": false,
+    "got_demo": false,
+    "signed_basement": false,
+    "signed_tape": false,
+    "signed_echo": false,
+    "beat_onys": false
+  },
+  "initial_bag": {
+    "demo": 5,
+    "water": 3,
+    "lozenge": 1,
+    "encore": 1
+  }
+}
