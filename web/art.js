@@ -806,6 +806,20 @@ function personSmooth(ctx, x, y, o) {
     else fillRound(ctx, capDark, x - 2.5, hy - 1.8, 5, 1.6, .8);
     circle(ctx, '#fff6c2', x, hy - r + .4, .9);
   }
+  if (o.note) {
+    const beat = (o.time % 740) / 740, fy = hy - r - 8 + Math.sin(o.time / 380 + seed) * 1.4 - Math.exp(-beat * 6) * 1.2;
+    const glow = ctx.createRadialGradient(x, fy, 0, x, fy, 9);
+    glow.addColorStop(0, rgba(o.note, .5)); glow.addColorStop(1, rgba(o.note, 0));
+    ctx.fillStyle = glow; ctx.fillRect(x - 9, fy - 9, 18, 18);
+    ctx.save(); ctx.translate(x, fy); ctx.rotate(Math.sin(o.time / 520 + seed) * .18);
+    ellipseFill(ctx, '#211a33', -1.6, 2.6, 2.9, 2.2);
+    ellipseFill(ctx, o.note, -1.6, 2.4, 2.1, 1.5);
+    ctx.fillStyle = '#211a33'; ctx.fillRect(.1, -5.6, 1.9, 8.4);
+    ctx.fillStyle = o.note; ctx.fillRect(.5, -5.2, 1.1, 7.8);
+    stroke(ctx, '#211a33', 2.4, () => { ctx.moveTo(1, -5.2); ctx.quadraticCurveTo(4.6, -3.6, 4, -.6); });
+    stroke(ctx, o.note, 1.2, () => { ctx.moveTo(1, -5.2); ctx.quadraticCurveTo(4.6, -3.6, 4, -.6); });
+    ctx.restore();
+  }
   if (o.badge) {
     const fy = hy - r - 7 + Math.sin(o.time / 420 + seed) * 1.3;
     const glow = ctx.createRadialGradient(x, fy, 0, x, fy, 7);
@@ -1511,23 +1525,17 @@ export class FieldRenderer {
       facing = ['down', 'down', 'left', 'down', 'right', 'down', 'up'][hash(seed % 1000, slot) % 7];
     }
     const badge = ['label', 'boss'].includes(e.kind) ? (e.color || '#ffcb9d') : '';
-    personSmooth(ctx, x, y, { color: e.color || '#cbd6f2', facing, time, seed, badge, moving: false, phase: 0 });
+    const note = e.kind === 'minigame' ? (e.color || '#ffd36b') : '';
+    personSmooth(ctx, x, y, { color: e.color || '#cbd6f2', facing, time, seed, badge, note, moving: false, phase: 0 });
   }
 }
 
 // ------------------------------------------------------------ battle scene --
 
-export function renderBattleScene(ctx, o) {
-  const { world, battle, party, width: W, height: H, reserve = 0, time: now, fx = {} } = o;
-  if (!battle) return;
+// Neon city stage shared by battles and the stage duel. `pulse` (0–1) brightens it on the beat.
+export function drawStageBackdrop(ctx, { width: W, height: H, k, ox, oy, horizon, time: now, narrow = false, pulse = 0 }) {
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.imageSmoothingEnabled = true;
-  const areaH = Math.max(H * .45, H - reserve);
-  const narrow = W < areaH * .95, VW = narrow ? 460 : 720;
-  const k = Math.min(W / VW, areaH / 420);
-  const ox = (W - VW * k) / 2, oy = Math.max(0, (areaH - 420 * k) / 2);
-  const horizon = oy + 238 * k;
-
   const sky = ctx.createLinearGradient(0, 0, 0, horizon);
   sky.addColorStop(0, '#15122b'); sky.addColorStop(.7, '#2f2150'); sky.addColorStop(1, '#5a3266');
   ctx.fillStyle = sky; ctx.fillRect(0, 0, W, horizon);
@@ -1557,18 +1565,18 @@ export function renderBattleScene(ctx, o) {
       }
     }
   };
-  skyline(1, '#2a2045', 'rgba(232,170,214,.5)', 50, 150, .004);
+  skyline(1, '#2a2045', `rgba(232,170,214,${(.5 + pulse * .3).toFixed(3)})`, 50, 150, .004);
   const haze = ctx.createLinearGradient(0, horizon - 60 * k, 0, horizon);
-  haze.addColorStop(0, 'rgba(240,130,200,0)'); haze.addColorStop(1, 'rgba(240,130,200,.22)');
+  haze.addColorStop(0, 'rgba(240,130,200,0)'); haze.addColorStop(1, `rgba(240,130,200,${(.22 + pulse * .14).toFixed(3)})`);
   ctx.fillStyle = haze; ctx.fillRect(0, horizon - 60 * k, W, 60 * k);
-  skyline(2, '#1d1734', 'rgba(255,214,150,.55)', 30, 90, .009);
+  skyline(2, '#1d1734', `rgba(255,214,150,${(.55 + pulse * .3).toFixed(3)})`, 30, 90, .009);
 
   const floor = ctx.createLinearGradient(0, horizon, 0, H);
   floor.addColorStop(0, '#3a2551'); floor.addColorStop(1, '#130f22');
   ctx.fillStyle = floor; ctx.fillRect(0, horizon, W, H - horizon);
   ctx.save();
   ctx.beginPath(); ctx.rect(0, horizon, W, H - horizon); ctx.clip();
-  ctx.strokeStyle = 'rgba(244,140,210,.16)'; ctx.lineWidth = Math.max(1, k);
+  ctx.strokeStyle = `rgba(244,140,210,${(.16 + pulse * .12).toFixed(3)})`; ctx.lineWidth = Math.max(1, k);
   const vanishX = W / 2;
   for (let i = -14; i <= 14; i++) { ctx.beginPath(); ctx.moveTo(vanishX + i * 12 * k, horizon); ctx.lineTo(vanishX + i * 130 * k, H); ctx.stroke(); }
   const scroll = (now / 2600) % 1;
@@ -1591,20 +1599,36 @@ export function renderBattleScene(ctx, o) {
   }
   ctx.globalCompositeOperation = 'source-over';
 
-  const stagePad = (x, y, w, color) => {
-    ellipseFill(ctx, 'rgba(6,4,14,.55)', x, y + 14 * k, w * 1.06, w * .24);
-    const top = ctx.createLinearGradient(0, y - w * .2, 0, y + w * .2);
-    top.addColorStop(0, '#8a6a93'); top.addColorStop(1, '#4b3352');
-    ellipseFill(ctx, '#2c2038', x, y + 6 * k, w, w * .22);
-    ellipseFill(ctx, top, x, y, w, w * .2);
-    ctx.strokeStyle = `rgba(${color},.75)`; ctx.lineWidth = 2 * k;
-    ctx.setLineDash([10 * k, 8 * k]); ctx.lineDashOffset = -now / 30;
-    ctx.beginPath(); ctx.ellipse(x, y + 2 * k, w * .86, w * .16, 0, 0, TAU); ctx.stroke();
-    ctx.setLineDash([]);
-    const glow = ctx.createRadialGradient(x, y, 0, x, y, w);
-    glow.addColorStop(0, `rgba(${color},.25)`); glow.addColorStop(1, `rgba(${color},0)`);
-    ctx.fillStyle = glow; ctx.beginPath(); ctx.ellipse(x, y, w, w * .2, 0, 0, TAU); ctx.fill();
-  };
+}
+
+export function drawStagePad(ctx, x, y, w, color, k, now) {
+  ellipseFill(ctx, 'rgba(6,4,14,.55)', x, y + 14 * k, w * 1.06, w * .24);
+  const top = ctx.createLinearGradient(0, y - w * .2, 0, y + w * .2);
+  top.addColorStop(0, '#8a6a93'); top.addColorStop(1, '#4b3352');
+  ellipseFill(ctx, '#2c2038', x, y + 6 * k, w, w * .22);
+  ellipseFill(ctx, top, x, y, w, w * .2);
+  ctx.strokeStyle = `rgba(${color},.75)`; ctx.lineWidth = 2 * k;
+  ctx.setLineDash([10 * k, 8 * k]); ctx.lineDashOffset = -now / 30;
+  ctx.beginPath(); ctx.ellipse(x, y + 2 * k, w * .86, w * .16, 0, 0, TAU); ctx.stroke();
+  ctx.setLineDash([]);
+  const glow = ctx.createRadialGradient(x, y, 0, x, y, w);
+  glow.addColorStop(0, `rgba(${color},.25)`); glow.addColorStop(1, `rgba(${color},0)`);
+  ctx.fillStyle = glow; ctx.beginPath(); ctx.ellipse(x, y, w, w * .2, 0, 0, TAU); ctx.fill();
+}
+
+export function renderBattleScene(ctx, o) {
+  const { world, battle, party, width: W, height: H, reserve = 0, time: now, fx = {} } = o;
+  if (!battle) return;
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.imageSmoothingEnabled = true;
+  const areaH = Math.max(H * .45, H - reserve);
+  const narrow = W < areaH * .95, VW = narrow ? 460 : 720;
+  const k = Math.min(W / VW, areaH / 420);
+  const ox = (W - VW * k) / 2, oy = Math.max(0, (areaH - 420 * k) / 2);
+  const horizon = oy + 238 * k;
+
+  drawStageBackdrop(ctx, { width: W, height: H, k, ox, oy, horizon, time: now, narrow });
+  const stagePad = (x, y, w, color) => drawStagePad(ctx, x, y, w, color, k, now);
   const enemyX = ox + (narrow ? 334 : 530) * k, enemyY = oy + 214 * k, playerX = ox + (narrow ? 126 : 186) * k, playerY = oy + 352 * k;
   stagePad(enemyX, enemyY, (narrow ? 86 : 108) * k, '241,168,215');
   stagePad(playerX, playerY, (narrow ? 100 : 124) * k, '157,215,229');

@@ -1,5 +1,6 @@
 import { openEngine, icon, mountIcons, escapeHtml as e, exportJson } from '/engine.js';
 import { FieldRenderer, renderBattleScene, renderPortrait, paintItem, drawTransition } from '/art.js';
+import { StageDuel } from '/rhythm.js';
 
 const $ = selector => document.querySelector(selector);
 const $$ = selector => [...document.querySelectorAll(selector)];
@@ -20,7 +21,7 @@ let menuOpen = false, page = null, lastPageKey = '', journalTab = 'quest', bagTa
 let talkLine = 0, typing = null;
 let toastTimer, sound = false, audio, musicTimer, beat = 0;
 let held = [], tapped = null, touchDir = null, touchRun = false, shiftDown = false;
-let view = null, fx = null, scene = 'field', shownBattle = null;
+let view = null, fx = null, scene = 'field', shownBattle = null, duel = null;
 let afterStep = null, queuedInteract = false, nextWalkAt = 0, stepsTaken = 0, lastTick = 0, battleLockUntil = 0;
 let viewport = { w: 0, h: 0, dpr: 1, ratio: 1, tile: 48 }, needsResize = true, controlsH = 0;
 let pixelBudget = 5.2e6, drawCost = 0, slowFrames = 0;
@@ -409,6 +410,43 @@ function endBattle(before, notice, now) {
   fx = { kind: 'fade', start: now + delay, dur: 760, mid: 360, onMid() { scene = 'field'; shownBattle = null; snapView(); render(); showLocation(); } };
 }
 
+// ----------------------------------------------------------- stage duel ---
+
+function startStage(now = performance.now()) {
+  hideToast();
+  clearInterval(musicTimer);
+  const reduced = reduceMotion.matches;
+  fx = {
+    kind: 'battle', reduced, start: now, dur: reduced ? 500 : 1100, mid: reduced ? 250 : 680,
+    onMid() {
+      const entity = engine.result.minigame;
+      if (!entity) return;
+      scene = 'stage';
+      duel?.destroy();
+      duel = new StageDuel({
+        root: $('#stage-ui'), canvas: stage, world: engine.world, entity, party: engine.save.party,
+        best: engine.save.scores?.[`${engine.save.position.map}/${entity.id}`] || 0,
+        onFinish: result => run({ op: 'minigame', ...result }),
+        onQuit: () => run({ op: 'close' }),
+      });
+      render();
+    },
+  };
+}
+
+function endStage(now = performance.now()) {
+  fx = {
+    kind: 'fade', start: now, dur: 760, mid: 360,
+    onMid() {
+      duel?.destroy(); duel = null;
+      scene = 'field';
+      snapView(); render(); showLocation();
+      if (sound) musicTimer = setInterval(music, 185);
+      game.focus({ preventScroll: true });
+    },
+  };
+}
+
 // ------------------------------------------------------------------ menu ---
 
 function renderMenu() {
@@ -482,7 +520,7 @@ function renderPage() {
 }
 
 function openMenu() {
-  if (!engine || scene !== 'field' || fx || engine.save.battle || engine.result.talk || engine.result.starters) return;
+  if (!engine || scene !== 'field' || fx || engine.save.battle || engine.result.talk || engine.result.starters || engine.result.minigame) return;
   if (engine.result.shop) run({ op: 'close' });
   menuOpen = true; page = null;
   playSound(520, .04, .09, 'sine');
@@ -536,7 +574,7 @@ function render() {
 function run(command) {
   if (!engine) return null;
   const now = performance.now();
-  const oldBattle = engine.save.battle, oldTalk = engine.result.talk, oldShop = engine.result.shop;
+  const oldBattle = engine.save.battle, oldTalk = engine.result.talk, oldShop = engine.result.shop, oldMinigame = engine.result.minigame;
   const before = snapshotBattle();
   let next;
   try {
@@ -556,6 +594,8 @@ function run(command) {
   } else if (oldBattle && !next.save.battle && before) {
     endBattle(before, next.notice || '', now);
   }
+  if (!oldMinigame && next.minigame) startStage(now);
+  else if (oldMinigame && !next.minigame) endStage(now);
   if (command.op === 'move') playSound(295, .08, .13);
   if (next.notice) toast(next.notice);
   render();
@@ -585,7 +625,7 @@ function startMove(fromX, fromY, toX, toY, now, dur) {
 function currentDirection() { return touchDir || held.at(-1) || tapped || null; }
 
 function canWalk() {
-  return engine && !menuVisible() && scene === 'field' && !fx && !engine.save.battle && !engine.result.talk && !engine.result.starters;
+  return engine && !menuVisible() && scene === 'field' && !fx && !engine.save.battle && !engine.result.talk && !engine.result.starters && !engine.result.minigame;
 }
 
 function step(direction, now) {
@@ -657,7 +697,9 @@ function draw(now) {
   if (needsResize || viewport.ratio !== (window.devicePixelRatio || 1)) resize();
   const { width, height } = stage;
   const data = battleData();
-  if (data) {
+  if (scene === 'stage' && duel) {
+    duel.draw(ctx, width, height, now);
+  } else if (data) {
     renderBattleScene(ctx, { world: engine.world, battle: data.battle, party: data.party, width, height, reserve: (controlsH + 24) * viewport.dpr, time: now, fx: battleFx });
   } else {
     const position = viewPos(now);
@@ -701,7 +743,7 @@ function tick(now) {
 // ----------------------------------------------------------------- input ---
 
 function interact() {
-  if (!engine || menuVisible() || scene !== 'field' || fx || engine.save.battle) return;
+  if (!engine || menuVisible() || scene !== 'field' || fx || engine.save.battle || engine.result.minigame) return;
   if (engine.result.talk) { advance(); return; }
   if (engine.result.starters) return;
   if (view.moving) { queuedInteract = true; return; }
@@ -715,6 +757,11 @@ document.addEventListener('keydown', event => {
   if (!engine || event.ctrlKey || event.metaKey || event.altKey) return;
   const key = event.key.toLowerCase();
   if (key === 'shift') shiftDown = true;
+  if (scene === 'stage') {
+    if (fx) { event.preventDefault(); return; }
+    if (duel?.key(event, true) || [' ', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright'].includes(key) && !event.target.closest?.('button')) event.preventDefault();
+    return;
+  }
   if (/SELECT|INPUT|TEXTAREA/.test(event.target.tagName)) { if (key === 'escape') event.target.blur(); return; }
   const overlay = menuVisible();
   if (key === 'escape' || (key === 'backspace' && overlay)) {
@@ -761,10 +808,11 @@ document.addEventListener('keydown', event => {
 document.addEventListener('keyup', event => {
   const key = event.key.toLowerCase();
   if (key === 'shift') shiftDown = false;
+  if (scene === 'stage') { duel?.key(event, false); return; }
   if (keyDirections[key]) release(keyDirections[key]);
 });
 
-window.addEventListener('blur', () => { held = []; tapped = null; shiftDown = false; touchDir = null; touchRun = false; resetKnob(); });
+window.addEventListener('blur', () => { if (duel?.state === 'playing') duel.pause(); held = []; tapped = null; shiftDown = false; touchDir = null; touchRun = false; resetKnob(); });
 
 const dpad = $('#dpad'), knob = $('#dpad-knob');
 function resetKnob() { dpad.classList.remove('active'); knob.style.transform = ''; }
@@ -833,6 +881,7 @@ document.addEventListener('click', event => {
   else if (data.reset !== undefined && confirm('Start a new save? This clears your current progress.')) { closeMenu(); run({ op: 'reset' }); }
 });
 
+document.addEventListener('visibilitychange', () => { if (document.hidden && duel?.state === 'playing') duel.pause(); });
 new ResizeObserver(() => { needsResize = true; }).observe(stage);
 new ResizeObserver(entries => {
   controlsH = entries[0].target.offsetHeight;

@@ -476,6 +476,27 @@
               "level": 3
             }
           ]
+        },
+        {
+          "id": "pier-stage",
+          "kind": "minigame",
+          "name": "Cadence",
+          "x": 14,
+          "y": 16,
+          "art": "person",
+          "color": "#ffd36b",
+          "solid": true,
+          "dialogue": "cadence-intro",
+          "after": "cadence-after",
+          "reward": 150,
+          "squad": [
+            {
+              "species": "vinylfin",
+              "level": 6
+            }
+          ],
+          "minigame": "guitar",
+          "track": "rappomon1.mp3"
         }
       ],
       "encounters": [
@@ -1647,6 +1668,40 @@
       {
         "lines": [
           "Signed artists only. Your three label crews are on the guest list, so go ahead."
+        ]
+      }
+    ],
+    "cadence-intro": [
+      {
+        "lines": [
+          "Pier stage is open. No flows, no turns. Just you, your lead, and the beat.",
+          "Hit each note as it reaches the line. Clean hits drain my hype. Miss too many and the crowd boos you off.",
+          "Drain my hype before the track ends and the pier is yours."
+        ],
+        "choices": [
+          {
+            "label": "Take the stage",
+            "action": "minigame"
+          },
+          {
+            "label": "Not yet"
+          }
+        ]
+      }
+    ],
+    "cadence-after": [
+      {
+        "lines": [
+          "The whole pier is still talking about that set. Want to run it back for a higher score?"
+        ],
+        "choices": [
+          {
+            "label": "Run it back",
+            "action": "minigame"
+          },
+          {
+            "label": "Later"
+          }
         ]
       }
     ]

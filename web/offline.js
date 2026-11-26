@@ -1,5 +1,5 @@
-const CACHE = 'freestylomon-shell-v2';
-const SHELL = ['/', '/style.css', '/app.js', '/art.js', '/engine.js', '/freestylomon.wasm'];
+const CACHE = 'freestylomon-shell-v3';
+const SHELL = ['/', '/style.css', '/app.js', '/art.js', '/engine.js', '/rhythm.js', '/freestylomon.wasm'];
 
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(SHELL)).then(() => self.skipWaiting()));
@@ -9,7 +9,7 @@ self.addEventListener('activate', event => {
 });
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
-  if (event.request.method !== 'GET' || url.origin !== self.location.origin || !SHELL.includes(url.pathname)) return;
+  if (event.request.method !== 'GET' || url.origin !== self.location.origin || !(SHELL.includes(url.pathname) || url.pathname.startsWith('/music/'))) return;
   event.respondWith(fetch(event.request).then(response => {
     if (response.ok) {
       const copy = response.clone();

@@ -1,7 +1,7 @@
 use crate::model::*;
 use serde::Deserialize;
 use serde_json::{json, Value};
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 
 #[derive(Default)]
 pub struct Engine {
@@ -11,6 +11,7 @@ pub struct Engine {
     talk: Option<Talk>,
     shop: Option<Entity>,
     starters: bool,
+    minigame: Option<Entity>,
 }
 
 #[derive(Deserialize)]
@@ -60,6 +61,11 @@ enum Command {
     },
     Unequip {
         index: usize,
+    },
+    Minigame {
+        score: u32,
+        accuracy: u8,
+        cleared: bool,
     },
 }
 
@@ -187,6 +193,7 @@ impl Save {
             rng: seed,
             battle: None,
             starter_locked: false,
+            scores: BTreeMap::new(),
         }
     }
 
@@ -291,6 +298,7 @@ impl Engine {
             self.talk = None;
             self.shop = None;
             self.starters = false;
+            self.minigame = None;
         } else {
             if self.save.is_none() {
                 self.save = Some(Save::fresh(&self.world, 72));
@@ -299,7 +307,7 @@ impl Engine {
         }
         let mut result = json!({
             "save": self.save, "notice": self.notice, "talk": self.talk,
-            "shop": self.shop, "starters": self.starters,
+            "shop": self.shop, "starters": self.starters, "minigame": self.minigame,
         });
         if include_world {
             result["world"] = json!(self.world);
@@ -314,6 +322,7 @@ impl Engine {
                 self.talk = None;
                 self.shop = None;
                 self.starters = false;
+                self.minigame = None;
             }
             Command::Close => {
                 if let Some(talk) = self.talk.take() {
@@ -321,7 +330,13 @@ impl Engine {
                 }
                 self.shop = None;
                 self.starters = false;
+                self.minigame = None;
             }
+            Command::Minigame {
+                score,
+                accuracy,
+                cleared,
+            } => self.finish_minigame(score, accuracy, cleared),
             Command::Choice { index } => self.choose(index),
             Command::SelectStarter { id } => self.select_starter(&id),
             Command::Walk { direction } => self.walk(direction),
@@ -351,7 +366,12 @@ impl Engine {
 
     fn walk(&mut self, direction: String) {
         let save = self.save.as_mut().unwrap();
-        if self.talk.is_some() || self.shop.is_some() || self.starters || save.battle.is_some() {
+        if self.talk.is_some()
+            || self.shop.is_some()
+            || self.starters
+            || self.minigame.is_some()
+            || save.battle.is_some()
+        {
             return;
         }
         if !["up", "down", "left", "right"].contains(&direction.as_str()) {
@@ -422,7 +442,12 @@ impl Engine {
 
     fn interact(&mut self) {
         let save = self.save.as_ref().unwrap();
-        if save.battle.is_some() || self.talk.is_some() || self.shop.is_some() || self.starters {
+        if save.battle.is_some()
+            || self.talk.is_some()
+            || self.shop.is_some()
+            || self.starters
+            || self.minigame.is_some()
+        {
             return;
         }
         let (dx, dy) = delta(&save.facing);
@@ -463,6 +488,10 @@ impl Engine {
         let battle_key = format!("won:{}/{}", position.map, entity.id);
         if save.flags.get(&battle_key) == Some(&true) {
             if !entity.after.is_empty() && self.open_dialogue(&entity.after, Some(entity.clone())) {
+                return;
+            }
+            if entity.kind == "minigame" {
+                self.activate(&entity, "minigame");
                 return;
             }
             self.simple_talk(
@@ -605,6 +634,11 @@ impl Engine {
                     self.starters = true;
                 }
             }
+            "minigame" => {
+                if entity.kind == "minigame" && valid_track(&entity.track) {
+                    self.minigame = Some(entity.clone());
+                }
+            }
             "exit" => {
                 if let Some(destination) = &entity.destination {
                     if accessible(&self.world, save, destination) {
@@ -617,6 +651,57 @@ impl Engine {
                 save.flags.extend(entity.sets.clone());
             }
         }
+    }
+
+    fn finish_minigame(&mut self, score: u32, accuracy: u8, cleared: bool) {
+        let Some(entity) = self.minigame.take() else {
+            return;
+        };
+        let save = self.save.as_mut().unwrap();
+        let key = format!("{}/{}", save.position.map, entity.id);
+        let best = save.scores.entry(key.clone()).or_default();
+        let record = score > *best;
+        if record {
+            *best = score;
+        }
+        if !cleared {
+            self.notice = format!(
+                "{} kept the crowd this time. Come back and run it back.",
+                entity.name
+            );
+            return;
+        }
+        let won_key = format!("won:{key}");
+        let first = save.flags.get(&won_key) != Some(&true);
+        let mut lines = vec![format!("You won the stage duel against {}!", entity.name)];
+        if first {
+            save.money = save.money.saturating_add(entity.reward);
+            save.flags.insert(won_key, true);
+            save.flags.extend(entity.sets.clone());
+            if entity.reward > 0 {
+                lines.push(format!("+{} credits.", entity.reward));
+            }
+        }
+        let xp = 8 + u32::from(accuracy.min(100)) / 4 + if first { 12 } else { 0 };
+        if let Some(lead) = save.party.iter().position(|monster| monster.hp > 0) {
+            lines.push(format!(
+                "{} gained {xp} XP.",
+                monster_name(&self.world, &save.party[lead])
+            ));
+            let monster = &mut save.party[lead];
+            gain_xp(
+                &self.world,
+                monster,
+                &mut save.seen,
+                &mut save.owned,
+                xp,
+                &mut lines,
+            );
+        }
+        if record && score > 0 {
+            lines.push("New best score!".into());
+        }
+        self.notice = lines.join(" ");
     }
 
     fn select_starter(&mut self, id: &str) {

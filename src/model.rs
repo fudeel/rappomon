@@ -22,6 +22,19 @@ pub struct World {
     pub initial_bag: BTreeMap<String, u16>,
 }
 
+/// Minigame types the browser knows how to play.
+pub const MINIGAMES: [&str; 1] = ["guitar"];
+
+/// A track is a plain file name inside the project's `music` folder.
+pub fn valid_track(track: &str) -> bool {
+    !track.is_empty()
+        && track.len() <= 120
+        && !track.starts_with('.')
+        && track
+            .chars()
+            .all(|c| c.is_ascii_alphanumeric() || matches!(c, '-' | '_' | '.' | ' '))
+}
+
 impl Default for World {
     fn default() -> Self {
         serde_json::from_str(include_str!("../data/world.json"))
@@ -97,12 +110,15 @@ impl World {
                 }
                 if ![
                     "npc", "shop", "heal", "starter", "label", "rival", "boss", "item", "exit",
-                    "decor", "light", "wild",
+                    "decor", "light", "wild", "minigame",
                 ]
                 .contains(&entity.kind.as_str())
                     || (entity.kind == "item"
                         && (!self.items.contains_key(&entity.item) || entity.quantity == 0))
                     || (entity.kind == "exit" && !entity.destination.as_ref().is_some_and(plain))
+                    || (entity.kind == "minigame"
+                        && (!MINIGAMES.contains(&entity.minigame.as_str())
+                            || !valid_track(&entity.track)))
                     || (entity.kind == "light"
                         && (!(0.2..=32.0).contains(&entity.radius)
                             || !(0.0..=1.0).contains(&entity.strength)))
@@ -284,6 +300,10 @@ pub struct Entity {
     pub strength: f64,
     #[serde(default)]
     pub beam: bool,
+    #[serde(default, skip_serializing_if = "String::is_empty")]
+    pub minigame: String,
+    #[serde(default, skip_serializing_if = "String::is_empty")]
+    pub track: String,
 }
 
 fn one() -> u16 {
@@ -423,6 +443,8 @@ pub struct Save {
     pub checkpoint: Spawn,
     #[serde(default)]
     pub starter_locked: bool,
+    #[serde(default)]
+    pub scores: BTreeMap<String, u32>,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]

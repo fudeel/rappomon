@@ -86,6 +86,9 @@ fn serve(mut stream: TcpStream) -> io::Result<()> {
             false,
         );
     }
+    if let Some(name) = path.strip_prefix("/music/") {
+        return serve_music(&mut stream, name, head);
+    }
     let (file, mime, extra) = match path {
         "/backstage" | "/backstage/" | "/backstage.html" if !auth => {
             return response(
@@ -113,6 +116,7 @@ fn serve(mut stream: TcpStream) -> io::Result<()> {
         "/app.js" => ("app.js", "text/javascript; charset=utf-8", ""),
         "/art.js" => ("art.js", "text/javascript; charset=utf-8", ""),
         "/engine.js" => ("engine.js", "text/javascript; charset=utf-8", ""),
+        "/rhythm.js" => ("rhythm.js", "text/javascript; charset=utf-8", ""),
         "/backstage/admin.js" if auth => ("admin.js", "text/javascript; charset=utf-8", ""),
         "/backstage/admin.js" => {
             return response(
@@ -155,6 +159,63 @@ fn serve(mut stream: TcpStream) -> io::Result<()> {
             head,
         ),
     }
+}
+
+/// Serves an audio file from the project's `music` folder for the minigames.
+fn serve_music(stream: &mut TcpStream, encoded: &str, head: bool) -> io::Result<()> {
+    let name = percent_decode(encoded);
+    let mime = match name
+        .rsplit_once('.')
+        .map(|(_, extension)| extension.to_ascii_lowercase())
+        .as_deref()
+    {
+        Some("mp3") => "audio/mpeg",
+        Some("ogg" | "oga") => "audio/ogg",
+        Some("wav") => "audio/wav",
+        Some("m4a" | "mp4" | "aac") => "audio/mp4",
+        Some("flac") => "audio/flac",
+        Some("webm") => "audio/webm",
+        _ => "",
+    };
+    let safe = !name.is_empty()
+        && name.len() <= 120
+        && !name.starts_with('.')
+        && name
+            .chars()
+            .all(|c| c.is_ascii_alphanumeric() || matches!(c, '-' | '_' | '.' | ' '));
+    if !safe || mime.is_empty() {
+        return response(stream, "404 Not Found", "text/plain", "", b"Not found", head);
+    }
+    match std::fs::read(Path::new("music").join(&name)) {
+        Ok(body) => response(stream, "200 OK", mime, "", &body, head),
+        Err(_) => response(
+            stream,
+            "404 Not Found",
+            "text/plain",
+            "",
+            b"Track not found in the music folder",
+            head,
+        ),
+    }
+}
+
+fn percent_decode(value: &str) -> String {
+    let hex = |byte: u8| (byte as char).to_digit(16);
+    let bytes = value.as_bytes();
+    let mut out = Vec::with_capacity(bytes.len());
+    let mut i = 0;
+    while i < bytes.len() {
+        if bytes[i] == b'%' && i + 2 < bytes.len() {
+            if let (Some(high), Some(low)) = (hex(bytes[i + 1]), hex(bytes[i + 2])) {
+                out.push((high * 16 + low) as u8);
+                i += 3;
+                continue;
+            }
+        }
+        out.push(bytes[i]);
+        i += 1;
+    }
+    String::from_utf8_lossy(&out).into_owned()
 }
 
 fn response(

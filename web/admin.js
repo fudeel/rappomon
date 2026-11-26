@@ -4,7 +4,7 @@ import { renderMap, TILE, visible } from '/art.js';
 const $ = selector => document.querySelector(selector);
 const $$ = selector => [...document.querySelectorAll(selector)];
 const canvas = $('#editor-map');
-const entityKinds = {npc:'NPC', label:'Label boss', rival:'Trainer', boss:'Final boss', shop:'Shop', heal:'Healing station', starter:'Starter station', wild:'Wild mob', item:'Pickup', exit:'Map exit', decor:'Scenery', light:'Light'};
+const entityKinds = {npc:'NPC', label:'Label boss', rival:'Trainer', boss:'Final boss', shop:'Shop', heal:'Healing station', starter:'Starter station', minigame:'Stage duel', wild:'Wild mob', item:'Pickup', exit:'Map exit', decor:'Scenery', light:'Light'};
 const decorArt = ['lamp','bench','planter','speaker','mural','basement','clinic','echo','tape','onys'];
 const tilesArt = ['paving','road','crosswalk','sidewalk','grass','wild','tree','hedge','water','deck','floor','wall','carpet'];
 const creatureArt = ['cub','lynx','jackal','frog','fish','cat','moth','bat','ghost'];
@@ -164,7 +164,8 @@ function renderInspector() {
   const dialogue = field('dialogue','Dialogue',entity.dialogue,'select',optional(named(data.dialogues))) + field('after','After victory',entity.after,'select',optional(named(data.dialogues))) + field('locked','Locked message',entity.locked);
   const battle = field('reward','Reward credits',entity.reward,'number') + field('squad','Opponent squad',entity.squad,'json');
   const shop = field('stock','Stock (item IDs)',entity.stock,'json');
-  node.innerHTML = `<form id="entity-form"><p class="entity-id">${e(entity.id)}</p><div class="form-grid">${base}${general}${isLight ? light : ''}${isExit ? exit : ''}${isItem ? pickup : ''}</div>${!isLight && entity.kind !== 'decor' && !isItem ? `<div class="form-grid">${dialogue}</div>` : ''}${['label','rival','boss','wild'].includes(entity.kind) ? battle : ''}${entity.kind === 'shop' ? shop : ''}<details><summary>Conditional flags</summary>${field('when','Visible when',entity.when,'json')}${field('requires','Requires for interaction',entity.requires,'json')}${field('sets','Set upon completion',entity.sets,'json')}</details><div class="row-actions"><button class="button primary" type="submit">Apply entity</button><button class="button" type="button" data-duplicate>Duplicate</button><button class="button danger" type="button" data-delete-entity>Delete</button></div></form>`;
+  const minigame = field('minigame','Minigame',entity.minigame || 'guitar','select',[['guitar','Guitar duel']]) + field('track','Track file in music/',entity.track) + field('reward','Reward credits (first win)',entity.reward,'number') + field('squad','Opponent on stage',entity.squad,'json');
+  node.innerHTML = `<form id="entity-form"><p class="entity-id">${e(entity.id)}</p><div class="form-grid">${base}${general}${isLight ? light : ''}${isExit ? exit : ''}${isItem ? pickup : ''}</div>${!isLight && entity.kind !== 'decor' && !isItem ? `<div class="form-grid">${dialogue}</div>` : ''}${['label','rival','boss','wild'].includes(entity.kind) ? battle : ''}${entity.kind === 'shop' ? shop : ''}${entity.kind === 'minigame' ? `<div class="form-grid">${minigame}</div>` : ''}<details><summary>Conditional flags</summary>${field('when','Visible when',entity.when,'json')}${field('requires','Requires for interaction',entity.requires,'json')}${field('sets','Set upon completion',entity.sets,'json')}</details><div class="row-actions"><button class="button primary" type="submit">Apply entity</button><button class="button" type="button" data-duplicate>Duplicate</button><button class="button danger" type="button" data-delete-entity>Delete</button></div></form>`;
 }
 
 function getEntity(payload, x, y) {
@@ -182,6 +183,7 @@ function getEntity(payload, x, y) {
   if (kind === 'exit') Object.assign(entity, {art:'portal', destination:structuredClone(data.start)});
   if (['label','rival','boss'].includes(kind)) Object.assign(entity, {squad:[{species:data.starter,level:5}], reward:120});
   if (kind === 'shop') entity.stock = Object.keys(data.items);
+  if (kind === 'minigame') Object.assign(entity, {minigame:'guitar', track:Object.values(data.maps).flatMap(map => map.entities).find(other => other.kind === 'minigame')?.track || 'song.mp3', squad:[{species:data.starter,level:5}], reward:100});
   return entity;
 }
 
@@ -348,7 +350,7 @@ function renderDialogues() {
   const entries = world().dialogues;
   if (!Object.hasOwn(entries, dialogueId)) { dialogueId = Object.keys(entries)[0] || ''; dialogueDraft = null; }
   const branches = dialogueDraft || entries[dialogueId];
-  const editor = branches ? `<form id="dialogue-form"><p class="studio-hint">The first branch whose flags match is shown. Leave the final branch unconditional as a fallback.</p>${branches.map((branch, i) => `<section class="dialogue-branch"><div class="branch-head"><h3>Branch ${i + 1}</h3><div class="row-actions"><button type="button" class="button" data-branch-raise="${i}" ${i === 0 ? 'disabled' : ''}>Move up</button><button type="button" class="button danger" data-branch-delete="${i}" ${branches.length === 1 ? 'disabled' : ''}>Remove</button></div></div><div class="form-grid">${field(`b${i}_when`,'Requires flags',branch.when,'json')}${field(`b${i}_sets`,'Sets flags after dialogue',branch.sets,'json')}${field(`b${i}_lines`,'Lines, one per page',branch.lines,'lines')}</div><div class="dialogue-choices">${branch.choices.map((choice, j) => `<details class="choice-card" open><summary>Choice ${j + 1}</summary><div class="form-grid">${field(`b${i}c${j}_label`,'Button label',choice.label)}${field(`b${i}c${j}_next`,'Next dialogue',choice.next,'select',optional(named(entries)))}${field(`b${i}c${j}_give`,'Give item',choice.give,'select',optional(named(world().items)))}${field(`b${i}c${j}_action`,'Action',choice.action,'select',optional(options(['battle','shop','heal','starter','exit'])))}${field(`b${i}c${j}_when`,'Visible when',choice.when,'json')}${field(`b${i}c${j}_sets`,'Set flags',choice.sets,'json')}</div><button class="button danger" type="button" data-choice-delete="${i}:${j}">Remove choice</button></details>`).join('')}</div><button class="button" type="button" data-choice-add="${i}">Add choice</button></section>`).join('')}<div class="row-actions"><button class="button primary" type="submit">Apply dialogue</button><button class="button" type="button" data-branch-add>Add branch</button><button class="button danger" type="button" data-delete-dialogue>Delete dialogue</button></div></form>` : '<p class="studio-hint">Add a dialogue to write lines and choices.</p>';
+  const editor = branches ? `<form id="dialogue-form"><p class="studio-hint">The first branch whose flags match is shown. Leave the final branch unconditional as a fallback.</p>${branches.map((branch, i) => `<section class="dialogue-branch"><div class="branch-head"><h3>Branch ${i + 1}</h3><div class="row-actions"><button type="button" class="button" data-branch-raise="${i}" ${i === 0 ? 'disabled' : ''}>Move up</button><button type="button" class="button danger" data-branch-delete="${i}" ${branches.length === 1 ? 'disabled' : ''}>Remove</button></div></div><div class="form-grid">${field(`b${i}_when`,'Requires flags',branch.when,'json')}${field(`b${i}_sets`,'Sets flags after dialogue',branch.sets,'json')}${field(`b${i}_lines`,'Lines, one per page',branch.lines,'lines')}</div><div class="dialogue-choices">${branch.choices.map((choice, j) => `<details class="choice-card" open><summary>Choice ${j + 1}</summary><div class="form-grid">${field(`b${i}c${j}_label`,'Button label',choice.label)}${field(`b${i}c${j}_next`,'Next dialogue',choice.next,'select',optional(named(entries)))}${field(`b${i}c${j}_give`,'Give item',choice.give,'select',optional(named(world().items)))}${field(`b${i}c${j}_action`,'Action',choice.action,'select',optional(options(['battle','shop','heal','starter','exit','minigame'])))}${field(`b${i}c${j}_when`,'Visible when',choice.when,'json')}${field(`b${i}c${j}_sets`,'Set flags',choice.sets,'json')}</div><button class="button danger" type="button" data-choice-delete="${i}:${j}">Remove choice</button></details>`).join('')}</div><button class="button" type="button" data-choice-add="${i}">Add choice</button></section>`).join('')}<div class="row-actions"><button class="button primary" type="submit">Apply dialogue</button><button class="button" type="button" data-branch-add>Add branch</button><button class="button danger" type="button" data-delete-dialogue>Delete dialogue</button></div></form>` : '<p class="studio-hint">Add a dialogue to write lines and choices.</p>';
   $('#dialogue-tab').innerHTML = `<header><h2>Dialogue</h2></header><div class="data-layout"><div class="data-selector" role="group" aria-label="Dialogues">${Object.keys(entries).map(id => `<button class="palette-item ${dialogueId === id ? 'selected' : ''}" data-dialogue="${e(id)}">${e(id)}</button>`).join('')}<button class="button" data-new-dialogue>Add dialogue</button></div><div>${editor}</div></div>`;
 }
 
@@ -369,7 +371,7 @@ function flagNames() {
   for (const [id, map] of Object.entries(data.maps)) {
     for (const entity of map.entities) {
       if (entity.kind === 'item') flags.add(`taken:${id}/${entity.id}`);
-      if (['label','rival','boss','wild'].includes(entity.kind)) flags.add(`won:${id}/${entity.id}`);
+      if (['label','rival','boss','wild','minigame'].includes(entity.kind)) flags.add(`won:${id}/${entity.id}`);
       for (const field of ['when','requires','sets']) add(entity[field]);
       for (const member of entity.squad) add(member.when);
     }
@@ -445,7 +447,7 @@ function handleForm(form) {
   } else if (form.id === 'entity-form') {
     updateWorld(next => {
       const entity = next.maps[mapId].entities.find(entity => entity.id === selected);
-      for (const field of ['name','kind','art','color','dialogue','after','locked','item']) entity[field] = get(field) ?? entity[field];
+      for (const field of ['name','kind','art','color','dialogue','after','locked','item','minigame','track']) entity[field] = get(field) ?? entity[field];
       for (const field of ['x','y','reward','radius','strength','quantity']) entity[field] = get(field,'number') ?? entity[field];
       for (const field of ['solid','beam']) entity[field] = get(field,'checkbox') ?? entity[field];
       for (const field of ['when','requires','sets','squad','stock']) entity[field] = get(field,'json') ?? entity[field];
@@ -453,6 +455,7 @@ function handleForm(form) {
       if (entity.kind === 'exit' && !entity.destination) entity.destination = structuredClone(next.start);
       if (entity.kind === 'item' && !entity.item) entity.item = Object.keys(next.items)[0];
       if (['label','rival','boss','wild'].includes(entity.kind) && !entity.squad.length) entity.squad = [{species:next.starter,level:5}];
+      if (entity.kind === 'minigame') { entity.minigame ||= 'guitar'; entity.track ||= 'song.mp3'; if (!entity.squad.length) entity.squad = [{species:next.starter,level:5}]; }
     }, 'Entity settings applied.');
   } else if (form.id === 'catalog-form') {
     updateWorld(next => { for (const [id,,type] of definitions[catalog].fields()) next[catalog][catalogId][id] = get(id,type); }, 'Catalog entry applied.');
