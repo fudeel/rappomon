@@ -17,12 +17,17 @@ try {
             Join-Path $PWD 'target/release/freestylomon-local.exe'
             Join-Path $PWD 'target/release/freestylomon.exe'
         )
-        if ($running.Path -in $serverPaths) {
-            Write-Host "Freestylomon is already running at http://127.0.0.1:$Port/"
-            Write-Host "Backstage at http://127.0.0.1:$Port/backstage/ (admin / admin)"
-            return
+        if ($running.Path -notin $serverPaths) {
+            throw "Port $Port is already in use. Run this script with -Port 5174 or another free port."
         }
-        throw "Port $Port is already in use. Run this script with -Port 5174 or another free port."
+        # Restart the old server so it serves the latest build and routes.
+        Write-Host 'Restarting the running Freestylomon server with the latest build...'
+        Stop-Process -Id $running.Id -Force
+        $running.WaitForExit(5000) | Out-Null
+        $deadline = (Get-Date).AddSeconds(5)
+        while ((Get-NetTCPConnection -LocalPort $Port -State Listen -ErrorAction SilentlyContinue) -and (Get-Date) -lt $deadline) {
+            Start-Sleep -Milliseconds 200
+        }
     }
     cargo run --release -- $Port
     if ($LASTEXITCODE -ne 0) { throw 'The local Freestylomon server stopped with an error.' }

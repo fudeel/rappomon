@@ -66,6 +66,7 @@
 
   <button id="menu-button" class="menu-button" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="menu-drawer"><span class="menu-glyph" aria-hidden="true"><i></i><i></i><i></i></span><span class="menu-word" data-open="MENU" data-close="CLOSE"></span></button>
 
-  <script type="module" src="/app.js"></script>
+  <script type="module" src="/app.js" onerror="document.querySelector('#loading strong').textContent = 'The game files couldn’t load. Close the local server, run scripts/start.ps1 again, then reload.'"></script>
+  <script>setTimeout(() => { const box = document.querySelector('#loading:not(.done) strong'); if (box && box.textContent.startsWith('Loading')) box.textContent = 'Still loading… If this doesn’t clear, close the local server, run scripts/start.ps1 again, then reload.'; }, 12000);</script>
 </body>
 </html>

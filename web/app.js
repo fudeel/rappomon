@@ -1,6 +1,5 @@
 import { openEngine, icon, mountIcons, escapeHtml as e, exportJson } from '/engine.js';
 import { FieldRenderer, renderBattleScene, renderPortrait, paintItem, drawTransition } from '/art.js';
-import { StageDuel } from '/rhythm.js';
 
 const $ = selector => document.querySelector(selector);
 const $$ = selector => [...document.querySelectorAll(selector)];
@@ -15,6 +14,9 @@ const deltas = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] };
 const objectiveIcons = ['vinyl', 'tape', 'mic', 'flag'];
 const WALK_MS = 205, RUN_MS = 120, TYPE_CPS = 46;
 const renderer = new FieldRenderer();
+// Loaded on its own so the game still starts if the minigame file is missing.
+const rhythmReady = import('/rhythm.js');
+rhythmReady.catch(() => {});
 
 let engine;
 let menuOpen = false, page = null, lastPageKey = '', journalTab = 'quest', bagTarget = 0, battleMode = 'flows';
@@ -421,17 +423,25 @@ function startStage(now = performance.now()) {
     onMid() {
       const entity = engine.result.minigame;
       if (!entity) return;
-      scene = 'stage';
-      duel?.destroy();
-      duel = new StageDuel({
-        root: $('#stage-ui'), canvas: stage, world: engine.world, entity, party: engine.save.party,
-        best: engine.save.scores?.[`${engine.save.position.map}/${entity.id}`] || 0,
-        onFinish: result => run({ op: 'minigame', ...result }),
-        onQuit: () => run({ op: 'close' }),
+      rhythmReady.then(module => openStage(module, entity), () => {
+        run({ op: 'close' });
+        toast('The stage duel couldn’t load. Close the local server, run scripts/start.ps1 again, then reload this page.');
       });
-      render();
     },
   };
+}
+
+function openStage({ StageDuel }, entity) {
+  if (engine.result.minigame !== entity && engine.result.minigame?.id !== entity.id) return;
+  scene = 'stage';
+  duel?.destroy();
+  duel = new StageDuel({
+    root: $('#stage-ui'), canvas: stage, world: engine.world, entity, party: engine.save.party,
+    best: engine.save.scores?.[`${engine.save.position.map}/${entity.id}`] || 0,
+    onFinish: result => run({ op: 'minigame', ...result }),
+    onQuit: () => run({ op: 'close' }),
+  });
+  render();
 }
 
 function endStage(now = performance.now()) {
